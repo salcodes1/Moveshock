@@ -3,3 +3,7 @@
 
 #include "MoveshockGameModeBase.h"
 
+AMoveshockGameModeBase::AMoveshockGameModeBase()
+{
+	DefaultPawnClass = AMoveshockCharacter::StaticClass();
+}
