@@ -31,6 +31,8 @@ void AMoveshockCharacter::BeginPlay()
 	GetCharacterMovement()->bApplyGravityWhileJumping = false;
 	GetCharacterMovement()->Mass = 3.f;
 	GetCharacterMovement()->SetWalkableFloorAngle(53.f);
+	
+	Super::JumpMaxCount = 2; // double jump
 }
 
 void AMoveshockCharacter::Jump()
