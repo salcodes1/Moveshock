@@ -120,12 +120,12 @@ void AMoveshockCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInput
 
 void AMoveshockCharacter::MoveForward(float Value)
 {
-	FVector Direction = FRotationMatrix(Controller->GetControlRotation()).GetScaledAxis(EAxis::X);
+	FVector Direction = FRotationMatrix(GetActorRotation()).GetScaledAxis(EAxis::X);
 	AddMovementInput(Direction, Value);
 }
 void AMoveshockCharacter::MoveRight(float Value)
 {
-	FVector Direction = FRotationMatrix(Controller->GetControlRotation()).GetScaledAxis(EAxis::Y);
+	FVector Direction = FRotationMatrix(GetActorRotation()).GetScaledAxis(EAxis::Y);
 	AddMovementInput(Direction, Value);
 }
 
