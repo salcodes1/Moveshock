@@ -25,7 +25,7 @@ public:
 	UCameraComponent* Camera;
 
 	UPROPERTY()
-	bool bIsWallruning;
+	bool bIsWallrunning;
 	
 // Methods
 public:

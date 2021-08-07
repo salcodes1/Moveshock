@@ -58,7 +58,7 @@ void AMoveshockCharacter::Tick(float DeltaTime)
 	
 	FHitResult FinalHit;
 		
-	bIsWallruning = false;
+	bIsWallrunning = false;
 
 	for(FHitResult& SphereHit : SphereHits)
 	{
@@ -70,19 +70,19 @@ void AMoveshockCharacter::Tick(float DeltaTime)
 		{
 			if(GetCharacterMovement()->IsFalling())
 			{
-					bIsWallruning = true;
+					bIsWallrunning = true;
 					FinalHit = SphereHit;
 			}
 			break;
 		}
 	}
-	if(bWantsToJump && bIsWallruning)
+	if(bWantsToJump && bIsWallrunning)
 	{
-		bIsWallruning = false;
+		bIsWallrunning = false;
 		GetCharacterMovement()->AddImpulse((FinalHit.ImpactNormal + 1.2 * FVector::UpVector) * 200);
 	}
 	
-	if(bIsWallruning)
+	if(bIsWallrunning)
 	{
 		Camera->SetFieldOfView(115.f);
 		GEngine->AddOnScreenDebugMessage(-1, 0.2f, FColor::Red, "ADDING");
