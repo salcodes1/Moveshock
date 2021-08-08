@@ -28,7 +28,10 @@ void AMoveshockCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
-	GetCharacterMovement()->bApplyGravityWhileJumping = false;
+	GetCharacterMovement()->bApplyGravityWhileJumping = true;
+	GetCharacterMovement()->JumpZVelocity = 470.f;
+	GetCharacterMovement()->AirControl = 1.3f;
+	GetCharacterMovement()->GravityScale = 1.3f;
 	GetCharacterMovement()->Mass = 3.f;
 	GetCharacterMovement()->SetWalkableFloorAngle(53.f);
 	
@@ -47,11 +50,60 @@ void AMoveshockCharacter::StopJumping()
 	Super::StopJumping();
 }
 
+void AMoveshockCharacter::CheckForWallclimb(float DeltaTime)
+{
+	FHitResult WallclimbResult;
+
+	FCollisionQueryParams QueryParams = {};
+	QueryParams.AddIgnoredActor(this);
+
+	const bool bHit = GetWorld()->LineTraceSingleByChannel(WallclimbResult, GetActorLocation(), GetActorLocation() + GetActorForwardVector() * 100.f, ECC_WorldStatic, QueryParams);
+
+	static float ClimbForce = 4000.f;
+	static bool addedImpulse = false;
+	static bool wallclimbReset = true;
+
+	FVector2D wallNormal = FVector2D(WallclimbResult.ImpactNormal);
+
+	FVector2D cameraNormal = FVector2D(Camera->GetForwardVector());
+	
+	float povAngle = 180 - FMath::Acos(FVector2D::DotProduct(wallNormal, cameraNormal) / wallNormal.Size() / cameraNormal.Size()) * 180 / PI;
+
+	if(GetCharacterMovement()->IsFalling())
+	{
+		if(bHit && GetInputAxisValue("MoveForward") > 0.f && povAngle <= MaxWallclimbAngle && wallclimbReset)
+		{
+			if(!addedImpulse)
+			{
+				GetCharacterMovement()->Velocity.Z = 0;
+				GetCharacterMovement()->AddImpulse(FVector(0, 0, GetCharacterMovement()->JumpZVelocity), true);
+				addedImpulse = true;
+				JumpCurrentCount = 0;
+				GEngine->AddOnScreenDebugMessage(2, 0.1, FColor::Red, TEXT("IMPULSE"));
+			}
+			GetCharacterMovement()->AddForce(FVector(0, 0, ClimbForce));
+			ClimbForce -= 150.f * DeltaTime;
+			Camera->SetFieldOfView(FMath::FInterpTo(Camera->FieldOfView, 120.f, DeltaTime, 10.f));
+		}
+		
+	}
+	else
+	{
+		wallclimbReset = false;
+		Camera->SetFieldOfView(FMath::FInterpTo(Camera->FieldOfView, 110.f, DeltaTime, 10.f));
+		ClimbForce = 4000.f, addedImpulse = false;
+	}
+	if(!GetCharacterMovement()->IsFalling())
+		wallclimbReset = true;
+}
+
 
 // Called every frame
 void AMoveshockCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	
+	CheckForWallclimb(DeltaTime);
 }
 
 // Called to bind functionality to input

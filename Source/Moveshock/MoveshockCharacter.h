@@ -15,8 +15,15 @@ class MOVESHOCK_API AMoveshockCharacter : public ACharacter
 	GENERATED_BODY()
 
 	
+	void CheckForWallclimb(float DeltaTime);
+
+	
 // Members
 public:
+
+	//Constants
+
+	const float MaxWallclimbAngle = 20.f;
 
 	UPROPERTY()
 	bool bWantsToJump;
