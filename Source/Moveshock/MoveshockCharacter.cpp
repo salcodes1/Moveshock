@@ -61,7 +61,6 @@ void AMoveshockCharacter::CheckForWallclimb(float DeltaTime)
 
 	static float ClimbForce = 4000.f;
 	static bool addedImpulse = false;
-	static bool wallclimbReset = true;
 
 	FVector2D wallNormal = FVector2D(WallclimbResult.ImpactNormal);
 
@@ -71,12 +70,12 @@ void AMoveshockCharacter::CheckForWallclimb(float DeltaTime)
 
 	if(GetCharacterMovement()->IsFalling())
 	{
-		if(bHit && GetInputAxisValue("MoveForward") > 0.f && povAngle <= MaxWallclimbAngle && wallclimbReset)
+		if(bHit && GetInputAxisValue("MoveForward") > 0.f && povAngle <= MaxWallclimbAngle)
 		{
 			if(!addedImpulse)
 			{
 				GetCharacterMovement()->Velocity.Z = 0;
-				GetCharacterMovement()->AddImpulse(FVector(0, 0, GetCharacterMovement()->JumpZVelocity), true);
+				GetCharacterMovement()->AddImpulse(FVector(0, 0, GetCharacterMovement()->JumpZVelocity), false);
 				addedImpulse = true;
 				JumpCurrentCount = 0;
 				GEngine->AddOnScreenDebugMessage(2, 0.1, FColor::Red, TEXT("IMPULSE"));
@@ -89,12 +88,9 @@ void AMoveshockCharacter::CheckForWallclimb(float DeltaTime)
 	}
 	else
 	{
-		wallclimbReset = false;
 		Camera->SetFieldOfView(FMath::FInterpTo(Camera->FieldOfView, 110.f, DeltaTime, 10.f));
 		ClimbForce = 4000.f, addedImpulse = false;
 	}
-	if(!GetCharacterMovement()->IsFalling())
-		wallclimbReset = true;
 }
 
 
